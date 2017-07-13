@@ -2,6 +2,7 @@
 __author__ = 'huang jing'
 import tushare as ts
 import sys
+import util.DataUtil as dataUtil
 from datetime import datetime
 
 
@@ -9,7 +10,7 @@ class TushareApi:
     path = "/home/huangjing/data/"
 
     @staticmethod
-    def get_hist_data(self, start=None, end=None):
+    def get_hist_data(start=None, end=None):
 
         stocks = ts.get_stock_basics()
         for stock in stocks.index:
@@ -29,11 +30,45 @@ class TushareApi:
         df = ts.get_concept_classified()
         dataPath = TushareApi.path + "concept_classified/" + "concept_classified.csv"
         df.to_csv(dataPath, header=False)
+
     @staticmethod
     def get_stock_basics():
         df = ts.get_stock_basics()
         dataPath = TushareApi.path + "stock_basics/" + "stock_basics.csv"
         df.to_csv(dataPath, header=False)
+
+    @staticmethod
+    def get_report_data(start=None, end=None):
+        startArr = start.split("-")
+        endArr = end.split("-")
+        seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
+        for season in seasonList :
+            df = ts.get_report_data(season[0],season[1])
+            dataPath = TushareApi.path + "report_data/" + "report_data_"+season[0]+"_"+season[1]+".csv"
+            df.to_csv(dataPath, header=False)
+
+
+    @staticmethod
+    def get_profit_data(start=None, end=None):
+
+        startArr = start.split("-")
+        endArr = end.split("-")
+        seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
+        for season in seasonList :
+            df = ts.get_profit_data(season[0],season[1])
+            dataPath = TushareApi.path + "profit_data/" + "profit_data_"+season[0]+"_"+season[1]+".csv"
+            df.to_csv(dataPath, header=False)
+
+    @staticmethod
+    def get_operation_data(start=None, end=None):
+        dataPath = TushareApi.path + "operation_data/" + "operation_data.csv"
+        startArr = start.split("-")
+        endArr = end.split("-")
+        seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
+        for season in seasonList :
+            df = ts.get_operation_data(season[0],season[1])
+            df.to_csv(dataPath, header=False)
+
 if __name__ == '__main__':
     """
     a=datetime.now()
@@ -46,9 +81,9 @@ if __name__ == '__main__':
     TushareApi.get_hist_data('2017-07-07','2017-07-08')
     TushareApi.get_industry_classified()
     TushareApi.get_concept_classified()
+    TushareApi.get_stock_basics()
     """
 
     reload(sys)
     sys.setdefaultencoding('utf-8')
-    TushareApi.get_stock_basics()
-    ts.get_report_data()
+    TushareApi.get_report_data('2016-01-01','2017-01-01')

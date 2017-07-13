@@ -111,7 +111,24 @@ def dateAddInDays(date1, addcount):
     except Exception as e:
         print e
         return None
-def dateAddInYears(date1,addcount):
+
+
+def dateAddInMonth(datetime1, n=1):
+    one_day = datetime.timedelta(days=1)
+    q, r = divmod(datetime1.month + n, 12)
+
+    datetime2 = datetime.datetime(
+        datetime1.year + q, r + 1, 1) - one_day
+
+    if datetime1.month != (datetime1 + one_day).month:
+        return datetime2
+
+    if datetime1.day >= datetime2.day:
+        return datetime2
+    return datetime2
+
+
+def dateAddInYears(date1, addcount):
     '''
             日期加上或者减去一个数字，返回一个新的日期
             参数date1：要计算的日期
@@ -119,11 +136,12 @@ def dateAddInYears(date1,addcount):
     '''
     try:
         d1Elements = getDateElements(date1)
-        d1 = datetime.datetime(d1Elements.tm_year+addcount, d1Elements.tm_mon, d1Elements.tm_mday)
+        d1 = datetime.datetime(d1Elements.tm_year + addcount, d1Elements.tm_mon, d1Elements.tm_mday)
         return d1.strftime(format_date)
     except Exception as e:
         print e
         return None
+
 
 def is_leap_year(pyear):
     '''
@@ -158,8 +176,6 @@ def dateDiffInSeconds(date1, date2):
         return None
 
 
-
-
 def getWeekOfDate(pdate):
     '''
             获取日期对应的周，输入一个日期，返回一个周数字，范围是0~6、其中0代表周日
@@ -171,20 +187,26 @@ def getWeekOfDate(pdate):
         weekday = 0
     return weekday
 
-def getListSeason(startYear,startMonth,endYear,endMonth):
+
+def getListSeason(startYear, startMonth, endYear, endMonth):
     '''
             获取每个季度集合
     '''
     season = []
+    if (endYear - startYear < 0 | startMonth>12 | endMonth>12 ):
+        return season
 
-    if endYear-startYear >0 :
-        year = endYear-startYear+1
-        for i in range(1,year):
-            for j in range(1,5):
-                season.append({str(startYear+i)+":"+str(j)})
-    '''
-    elif endYear-startYear == 0 & endMonth>startMonth:
-    '''
+    while startYear <= endYear:
+
+        if startYear==endYear:
+            if endMonth < startMonth:
+                return season
+
+        dt = dateAddInMonth(datetime.datetime(startYear, startMonth, 1),3)
+        season.append([startYear,startMonth/3+1])
+        startYear = dt.year
+        startMonth = dt.month
+
 
 if __name__ == "__main__":
     '''
@@ -205,10 +227,12 @@ if __name__ == "__main__":
     # print getCurrentDateTime()
     # print dateDiffInSeconds(getCurrentDateTime(), "2013-06-17 14:00:00")
     # print getCurrentHour()
-    print dateAddInDays("2013-04-05", -5)
-    print dateAddInYears("2016-11-24",-5)
-    print getCurrentDate()
+    # print dateAddInDays("2013-04-05", -5)
+    # print dateAddInYears("2016-11-24",-5)
+    # print getCurrentDate()
     # print getDateToNumber("2013-04-05")
     # print getDateToNumber("2013-04-05 22:11:33")
-
+    # print getListSeason(2015,3,2016,4)
     # print getWeekOfDate("2013-10-01")
+
+    print getListSeason(2015,1,2016,7)
