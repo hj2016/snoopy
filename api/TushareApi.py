@@ -4,7 +4,9 @@ import tushare as ts
 import sys
 import util.DataUtil as dataUtil
 from datetime import datetime
-
+import numpy as np
+import pandas as pd
+import util.Logger as log
 
 class TushareApi:
     path = "/home/huangjing/data/"
@@ -18,21 +20,20 @@ class TushareApi:
             if (not stockInfo is None):
                 dataPath = TushareApi.path + "hist_data/" + str(stock) + ".csv"
                 stockInfo.to_csv(dataPath, header=False)
-
     @staticmethod
-    def get_industry_classified():
+    def get_industry_classified(start=None, end=None ):
         df = ts.get_industry_classified()
         dataPath = TushareApi.path + "industry_classified/" + "industry_classified.csv"
         df.to_csv(dataPath, header=False)
 
     @staticmethod
-    def get_concept_classified():
+    def get_concept_classified(start=None, end=None):
         df = ts.get_concept_classified()
         dataPath = TushareApi.path + "concept_classified/" + "concept_classified.csv"
         df.to_csv(dataPath, header=False)
 
     @staticmethod
-    def get_stock_basics():
+    def get_stock_basics(start=None, end=None):
         df = ts.get_stock_basics()
         dataPath = TushareApi.path + "stock_basics/" + "stock_basics.csv"
         df.to_csv(dataPath, header=False)
@@ -44,9 +45,11 @@ class TushareApi:
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
             df = ts.get_report_data(season[0],season[1])
-            dataPath = TushareApi.path + "report_data/" + "report_data_"+season[0]+"_"+season[1]+".csv"
-            df.to_csv(dataPath, header=False)
+            dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
+            df = pd.concat([df,dt],axis=1)
+            dataPath = TushareApi.path + "report_data/" + "report_data_"+str(season[0])+"_"+str(season[1])+".csv"
+            df.to_csv(dataPath, header=False)
 
     @staticmethod
     def get_profit_data(start=None, end=None):
@@ -55,19 +58,71 @@ class TushareApi:
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
-            df = ts.get_profit_data(season[0],season[1])
-            dataPath = TushareApi.path + "profit_data/" + "profit_data_"+season[0]+"_"+season[1]+".csv"
+            df = ts.get_report_data(season[0],season[1])
+            dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
+
+            df = pd.concat([df,dt],axis=1)
+            dataPath = TushareApi.path + "profit_data/" + "profit_data_"+str(season[0])+"_"+str(season[1])+".csv"
             df.to_csv(dataPath, header=False)
 
     @staticmethod
     def get_operation_data(start=None, end=None):
-        dataPath = TushareApi.path + "operation_data/" + "operation_data.csv"
         startArr = start.split("-")
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
             df = ts.get_operation_data(season[0],season[1])
+            dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
+
+            df = pd.concat([df,dt],axis=1)
+            dataPath = TushareApi.path + "operation_data/" + "operation_data_"+str(season[0])+"_"+str(season[1])+".csv"
             df.to_csv(dataPath, header=False)
+
+    @staticmethod
+    def get_growth_data(start=None, end=None):
+        startArr = start.split("-")
+        endArr = end.split("-")
+        seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
+        for season in seasonList :
+            df = ts.get_growth_data(season[0],season[1])
+            dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
+
+            df = pd.concat([df,dt],axis=1)
+            dataPath = TushareApi.path + "growth_data/" + "growth_data_"+str(season[0])+"_"+str(season[1])+".csv"
+            df.to_csv(dataPath, header=False)
+
+    @staticmethod
+    def get_debtpaying_data(start=None, end=None):
+        startArr = start.split("-")
+        endArr = end.split("-")
+        seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
+        for season in seasonList :
+            df = ts.get_debtpaying_data(season[0],season[1])
+            dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
+
+            df = pd.concat([df,dt],axis=1)
+            dataPath = TushareApi.path + "debtpaying_data/" + "debtpaying_data_"+str(season[0])+"_"+str(season[1])+".csv"
+            df.to_csv(dataPath, header=False)
+
+    @staticmethod
+    def  get_cashflow_data(start=None, end=None):
+        startArr = start.split("-")
+        endArr = end.split("-")
+        seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
+        for season in seasonList :
+            df = ts.get_cashflow_data(season[0],season[1])
+            dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
+
+            df = pd.concat([df,dt],axis=1)
+            dataPath = TushareApi.path + "cashflow_data/" + "cashflow_data_"+str(season[0])+"_"+str(season[1])+".csv"
+            df.to_csv(dataPath, header=False)
+
+    @staticmethod
+    def is_trade_day(day=None):
+        df=ts.trade_cal()
+        rs = df[df.calendarDate==day]
+        return rs.at[rs.index[0],"isOpen"]
+
 
 if __name__ == '__main__':
     """
@@ -86,4 +141,15 @@ if __name__ == '__main__':
 
     reload(sys)
     sys.setdefaultencoding('utf-8')
-    TushareApi.get_report_data('2016-01-01','2017-01-01')
+    #TushareApi.get_report_data('2016-01-01','2017-01-01')
+    #TushareApi.get_profit_data('2016-01-01','2017-01-01')
+    #TushareApi.get_operation_data('2016-01-01','2017-01-01')
+    #TushareApi.get_growth_data('2016-01-01','2017-01-01')
+    #TushareApi.get_debtpaying_data('2016-01-01','2017-01-01')
+    #TushareApi.get_cashflow_data('2016-01-01','2017-01-01')
+    #TushareApi.is_trade_day("2017-07-14")
+
+    #ret = getattr(TushareApi,'is_trade_day')
+    #print ret("2017-07-14")
+
+    TushareApi.get_cashflow_data('2017-06-15','2017-06-16')

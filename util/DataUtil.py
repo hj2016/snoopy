@@ -3,7 +3,23 @@
 @author: huangjing
 @version: 2013-10-12
 '''
-import datetime, time
+import datetime
+import time
+import functools
+import logging
+
+def time_me(info="used"):
+    def _time_me(fn):
+        @functools.wraps(fn)
+        def _wrapper(*args, **kwargs):
+            start = time.clock()
+            result = fn(*args, **kwargs)
+            logging.info('%s %s %s %s', fn.__name__, info, time.clock() - start, "second")
+            return result
+
+        return _wrapper
+
+    return _time_me
 
 # 定义的日期的格式，可以自己改一下，比如改成"$Y年$m月$d日"
 format_date = "%Y-%m-%d"
@@ -203,7 +219,10 @@ def getListSeason(startYear, startMonth, endYear, endMonth):
                 return season
 
         dt = dateAddInMonth(datetime.datetime(startYear, startMonth, 1),3)
-        season.append([startYear,startMonth/3+1])
+        n = 1
+        if startMonth % 3 ==0 :
+            n =0
+        season.append([startYear,startMonth/3+n])
         startYear = dt.year
         startMonth = dt.month
 
@@ -236,3 +255,4 @@ if __name__ == "__main__":
     # print getWeekOfDate("2013-10-01")
 
     print getListSeason(2015,1,2016,7)
+
