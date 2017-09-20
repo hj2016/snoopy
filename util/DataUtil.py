@@ -203,14 +203,36 @@ def getWeekOfDate(pdate):
         weekday = 0
     return weekday
 
+def getListMonth(start,end):
+    '''
+            获取每个月集合
+    '''
+    months = []
+    if(start > end):
+        return months
+    startTime = time.strptime(start, "%Y-%m-%d")
+    endTime = time.strptime(end, "%Y-%m-%d")
+
+    startYear = startTime.tm_year
+    startMonth = startTime.tm_mon
+
+    endYear = endTime.tm_year
+    endMonth = endTime.tm_mon
+
+
+
+
 
 def getListSeason(startYear, startMonth, endYear, endMonth):
     '''
             获取每个季度集合
     '''
     season = []
-    if (endYear - startYear < 0 | startMonth>12 | endMonth>12 ):
+    if (endYear - startYear < 0):
         return season
+    elif (endYear - startYear == 0):
+        if(endMonth -startMonth < 0 ):
+            return season
 
     while startYear <= endYear:
 
@@ -226,6 +248,7 @@ def getListSeason(startYear, startMonth, endYear, endMonth):
         startYear = dt.year
         startMonth = dt.month
 
+    return season
 
 if __name__ == "__main__":
     '''
@@ -254,5 +277,5 @@ if __name__ == "__main__":
     # print getListSeason(2015,3,2016,4)
     # print getWeekOfDate("2013-10-01")
 
-    print getListSeason(2015,1,2016,7)
+    print getListSeason(2014,4,2014,12)
 

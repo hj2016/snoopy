@@ -18,27 +18,29 @@ class TushareApi:
         stocks = ts.get_stock_basics()
         for stock in stocks.index:
             stockInfo = ts.get_h_data(code=stock, start=start, end=end)
-            if (not stockInfo is None):
+            code = pd.DataFrame({"code": np.array([stock]*len(stockInfo))},index=stockInfo.index)
+            df = pd.concat([code,stockInfo],axis=1)
+            if (not stockInfo is None and not len(stockInfo) == 0):
                 dataPath = TushareApi.path + "hist_data/" + str(stock) + ".csv"
-                stockInfo.to_csv(dataPath, header=False)
+                fileUtil.saveDf(df,dataPath)
 
     @staticmethod
     def get_industry_classified(start=None, end=None ):
         df = ts.get_industry_classified()
         dataPath = TushareApi.path + "industry_classified/" + "industry_classified.csv"
-        df.to_csv(dataPath, header=False)
+        fileUtil.saveDf(df,dataPath)
 
     @staticmethod
     def get_concept_classified(start=None, end=None):
         df = ts.get_concept_classified()
         dataPath = TushareApi.path + "concept_classified/" + "concept_classified.csv"
-        df.to_csv(dataPath, header=False)
+        fileUtil.saveDf(df,dataPath)
 
     @staticmethod
     def get_stock_basics(start=None, end=None):
         df = ts.get_stock_basics()
         dataPath = TushareApi.path + "stock_basics/" + "stock_basics.csv"
-        df.to_csv(dataPath, header=False)
+        fileUtil.saveDf(df,dataPath)
 
     @staticmethod
     def get_report_data(start=None, end=None):
@@ -65,19 +67,6 @@ class TushareApi:
 
             df = pd.concat([df,dt],axis=1)
             dataPath = TushareApi.path + "profit_data/" +str(season[0])+"-"+str(season[1])+"/profit_data.csv"
-            fileUtil.saveDf(df,dataPath)
-
-    @staticmethod
-    def get_operation_data(start=None, end=None):
-        startArr = start.split("-")
-        endArr = end.split("-")
-        seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
-        for season in seasonList :
-            df = ts.get_operation_data(season[0],season[1])
-            dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
-
-            df = pd.concat([df,dt],axis=1)
-            dataPath = TushareApi.path + "operation_data/" +str(season[0])+"-"+str(season[1])+"/operation_data.csv"
             fileUtil.saveDf(df,dataPath)
 
     @staticmethod
@@ -126,6 +115,19 @@ class TushareApi:
         return rs.at[rs.index[0],"isOpen"]
 
 
+def get_operation_data(start=None, end=None):
+    startArr = start.split("-")
+    endArr = end.split("-")
+    seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
+    for season in seasonList :
+        df = ts.get_operation_data(season[0],season[1])
+        dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
+
+        df = pd.concat([df,dt],axis=1)
+        dataPath = TushareApi.path + "operation_data/" +str(season[0])+"-"+str(season[1])+"/operation_data.csv"
+        fileUtil.saveDf(df,dataPath)
+
+
 if __name__ == '__main__':
     """
     a=datetime.now()
@@ -143,11 +145,12 @@ if __name__ == '__main__':
 
     reload(sys)
     sys.setdefaultencoding('utf-8')
+    TushareApi.get_hist_data('2017-07-07','2017-07-08')
     #TushareApi.get_report_data('2016-01-01','2017-01-01')
     #TushareApi.get_profit_data('2016-01-01','2017-01-01')
     #TushareApi.get_operation_data('2016-01-01','2017-01-01')
     #TushareApi.get_growth_data('2016-01-01','2017-01-01')
-    TushareApi.get_debtpaying_data('2017-01-01','2017-01-02')
+    #TushareApi.get_debtpaying_data('2017-01-01','2017-01-02')
     #TushareApi.get_cashflow_data('2016-01-01','2017-01-01')
     #TushareApi.is_trade_day("2017-07-14")
 
