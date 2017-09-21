@@ -14,9 +14,11 @@ def isNotExisMkPath(filepath):
 '''
     保存dataFrame文件
 '''
-def saveDf(df,filepath):
+def saveDf(df,filepath,mode="w"):
     isNotExisMkPath(filepath)
-    df.to_csv(filepath, header=False)
+    df.to_csv(filepath, header=False,mode=mode)
+
+
 
 
 if __name__ == '__main__':

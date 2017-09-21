@@ -123,11 +123,22 @@ def dateAddInDays(date1, addcount):
         d1Elements = getDateElements(date1)
         d1 = datetime.datetime(d1Elements.tm_year, d1Elements.tm_mon, d1Elements.tm_mday)
         datenew = d1 + addtime
-        return datenew.strftime(format_date)
+        return datenew
     except Exception as e:
         print e
         return None
 
+
+def dateAddInMonth2(datatime1,n=1):
+
+    if( (datatime1.month+n) /12 >= 1 & (datatime1.month+n)%12 != 0):
+        tmonth = (datatime1.month+n)%12
+        tyear = datatime1.year+(datatime1.month+n) / 12
+        return datetime.datetime(tyear,tmonth,datatime1.day,hour=datatime1.hour,minute=datatime1.minute,second=datatime1.second,microsecond=datatime1.microsecond,tzinfo=datatime1.tzinfo)
+    else:
+        tmonth = datatime1.month+n
+        tyear = datatime1.year
+        return datetime.datetime(tyear,tmonth,datatime1.day,hour=datatime1.hour,minute=datatime1.minute,second=datatime1.second,microsecond=datatime1.microsecond,tzinfo=datatime1.tzinfo)
 
 def dateAddInMonth(datetime1, n=1):
     one_day = datetime.timedelta(days=1)
@@ -215,9 +226,39 @@ def getListMonth(start,end):
 
     startYear = startTime.tm_year
     startMonth = startTime.tm_mon
+    startday = startTime.tm_mday
 
     endYear = endTime.tm_year
     endMonth = endTime.tm_mon
+    endday = endTime.tm_mday
+
+    season = []
+
+    while startYear <= endYear :
+        if startYear==endYear:
+            if endMonth < startMonth:
+                return season
+            elif startMonth == endMonth:
+                sd = datetime.datetime(startYear, startMonth, startday).strftime("%Y-%m-%d")
+                ed = datetime.datetime(endYear, endMonth, endday).strftime("%Y-%m-%d")
+                dt = datetime.datetime(startYear, startMonth, startday).strftime("%Y-%m")
+                season.append([dt,sd,ed])
+                return season
+
+        st = datetime.datetime(startYear, startMonth, startday)
+        et = dateAddInMonth2(datetime.datetime(startYear, startMonth, 1),1)+ datetime.timedelta(days=-1)
+
+
+        if startMonth ==12 :
+            startYear = st.year+1
+            startMonth = 1
+        else:
+            startYear = st.year
+            startMonth = st.month+1
+
+        startday = 1
+
+        season.append([et.strftime("%Y-%m"),st.strftime("%Y-%m-%d"),et.strftime("%Y-%m-%d")])
 
 
 
@@ -277,5 +318,8 @@ if __name__ == "__main__":
     # print getListSeason(2015,3,2016,4)
     # print getWeekOfDate("2013-10-01")
 
-    print getListSeason(2014,4,2014,12)
+    print getListSeason(2015,3,2015,3)
+    print getListMonth("2016-01-01","2016-12-31")
+
+    # print getListMonth("2016-01-05","2017-02-24")
 
