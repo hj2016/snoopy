@@ -58,7 +58,7 @@ class TushareApi:
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
-            dataPath = TushareApi.path + "report_data/" +str(season[0])+"-"+str(season[1])+"/report_data.csv"
+            dataPath = TushareApi.path + "report_data/" +str(season[0])+"-"+str(season[1])+"-report_data.csv"
             fileUtil.saveDf(df,dataPath)
 
     @staticmethod
@@ -68,11 +68,11 @@ class TushareApi:
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
-            df = ts.get_report_data(season[0],season[1])
+            df = ts.get_profit_data(season[0],season[1])
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
-            dataPath = TushareApi.path + "profit_data/" +str(season[0])+"-"+str(season[1])+"/profit_data.csv"
+            dataPath = TushareApi.path + "profit_data/" +str(season[0])+"-"+str(season[1])+"-profit_data.csv"
             fileUtil.saveDf(df,dataPath)
 
     @staticmethod
@@ -85,7 +85,7 @@ class TushareApi:
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
-            dataPath = TushareApi.path + "growth_data/" +str(season[0])+"-"+str(season[1])+"/growth_data.csv"
+            dataPath = TushareApi.path + "growth_data/" +str(season[0])+"-"+str(season[1])+"-growth_data.csv"
             fileUtil.saveDf(df,dataPath)
 
     @staticmethod
@@ -98,7 +98,7 @@ class TushareApi:
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
-            dataPath = TushareApi.path + "debtpaying_data/" +str(season[0])+"-"+str(season[1])+"/debtpaying_data.csv"
+            dataPath = TushareApi.path + "debtpaying_data/" +str(season[0])+"-"+str(season[1])+"-debtpaying_data.csv"
             fileUtil.saveDf(df,dataPath)
 
     @staticmethod
@@ -111,7 +111,7 @@ class TushareApi:
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
-            dataPath = TushareApi.path + "cashflow_data/" +str(season[0])+"-"+str(season[1])+"/cashflow_data.csv"
+            dataPath = TushareApi.path + "cashflow_data/" +str(season[0])+"-"+str(season[1])+"-cashflow_data.csv"
             fileUtil.saveDf(df,dataPath)
 
     @staticmethod
@@ -120,18 +120,18 @@ class TushareApi:
         rs = df[df.calendarDate==day]
         return rs.at[rs.index[0],"isOpen"]
 
+    @staticmethod
+    def get_operation_data(start=None, end=None):
+        startArr = start.split("-")
+        endArr = end.split("-")
+        seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
+        for season in seasonList :
+            df = ts.get_operation_data(season[0],season[1])
+            dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
-def get_operation_data(start=None, end=None):
-    startArr = start.split("-")
-    endArr = end.split("-")
-    seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
-    for season in seasonList :
-        df = ts.get_operation_data(season[0],season[1])
-        dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
-
-        df = pd.concat([df,dt],axis=1)
-        dataPath = TushareApi.path + "operation_data/" +str(season[0])+"-"+str(season[1])+"/operation_data.csv"
-        fileUtil.saveDf(df,dataPath)
+            df = pd.concat([df,dt],axis=1)
+            dataPath = TushareApi.path + "operation_data/" +str(season[0])+"-"+str(season[1])+"-operation_data.csv"
+            fileUtil.saveDf(df,dataPath)
 
 
 if __name__ == '__main__':
@@ -151,7 +151,9 @@ if __name__ == '__main__':
     reload(sys)
 
     sys.setdefaultencoding('utf-8')
-    TushareApi.get_hist_data('2017-07-01','2017-07-06')
+    # TushareApi.get_hist_data('2017-07-01','2017-07-06')
+
+    TushareApi.get_cashflow_data('2017-01-01','2017-01-01')
 
     #TushareApi.get_report_data('2016-01-01','2017-01-01')
     #TushareApi.get_profit_data('2016-01-01','2017-01-01')
