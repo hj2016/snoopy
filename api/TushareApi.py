@@ -54,7 +54,7 @@ class TushareApi:
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
-            df = ts.get_report_data(season[0],season[1])
+            df = ts.get_report_data(season[0],season[1]).drop_duplicates('code')
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
@@ -68,7 +68,7 @@ class TushareApi:
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
-            df = ts.get_profit_data(season[0],season[1])
+            df = ts.get_profit_data(season[0],season[1]).drop_duplicates('code')
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
@@ -81,7 +81,7 @@ class TushareApi:
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
-            df = ts.get_growth_data(season[0],season[1])
+            df = ts.get_growth_data(season[0],season[1]).drop_duplicates('code')
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
@@ -94,7 +94,7 @@ class TushareApi:
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
-            df = ts.get_debtpaying_data(season[0],season[1])
+            df = ts.get_debtpaying_data(season[0],season[1]).drop_duplicates('code')
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
@@ -107,7 +107,7 @@ class TushareApi:
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
-            df = ts.get_cashflow_data(season[0],season[1])
+            df = ts.get_cashflow_data(season[0],season[1]).drop_duplicates('code')
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
@@ -126,7 +126,7 @@ class TushareApi:
         endArr = end.split("-")
         seasonList = dataUtil.getListSeason(int(startArr[0]), int(startArr[1]), int(endArr[0]), int(endArr[1]))
         for season in seasonList :
-            df = ts.get_operation_data(season[0],season[1])
+            df = ts.get_operation_data(season[0],season[1]).drop_duplicates('code')
             dt = pd.DataFrame({"date": np.array([str(season[0])+"-"+str(season[1])]*len(df))},index=df.index)
 
             df = pd.concat([df,dt],axis=1)
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     sys.setdefaultencoding('utf-8')
     # TushareApi.get_hist_data('2017-07-01','2017-07-06')
 
-    TushareApi.get_cashflow_data('2017-01-01','2017-01-01')
+    TushareApi.get_report_data('2017-01-01','2017-05-01')
 
     #TushareApi.get_report_data('2016-01-01','2017-01-01')
     #TushareApi.get_profit_data('2016-01-01','2017-01-01')
