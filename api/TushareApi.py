@@ -23,9 +23,10 @@ class TushareApi:
 
             for stock in stocks.index :
                 stockInfo = ts.get_hist_data(code=stock, start=tmonth[1], end=tmonth[2])
-                code = pd.DataFrame({"code": np.array([stock]*len(stockInfo))},index=stockInfo.index)
-                df = pd.concat([code,stockInfo],axis=1)
+
                 if (not stockInfo is None and not len(stockInfo) == 0):
+                    code = pd.DataFrame({"code": np.array([stock]*len(stockInfo))},index=stockInfo.index)
+                    df = pd.concat([code,stockInfo],axis=1)
                     #dataPath = TushareApi.path + "hist_data/dt=" + str(tmonth[0]) + "/" + str(stock) + ".csv"
                     dataPath = TushareApi.path + "hist_data/dt=" + str(tmonth[0]) + "/stock.csv"
                     fileUtil.saveDf(df,dataPath,"a")
@@ -153,7 +154,7 @@ if __name__ == '__main__':
     sys.setdefaultencoding('utf-8')
     # TushareApi.get_hist_data('2017-07-01','2017-07-06')
 
-    TushareApi.get_report_data('2017-01-01','2017-05-01')
+    TushareApi.get_hist_data('2017-06-01','2017-06-01')
 
     #TushareApi.get_report_data('2016-01-01','2017-01-01')
     #TushareApi.get_profit_data('2016-01-01','2017-01-01')

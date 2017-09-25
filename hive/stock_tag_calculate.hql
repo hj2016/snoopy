@@ -1,3 +1,4 @@
+insert overwrite table stock_tag
 select
   s1.code,
   s1.name,
